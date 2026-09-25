@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Geolocation API</title>
+</head>
+<body>
+
+    <h2>Geolocation API Demo</h2>
+    <button onclick="getLocation()">Get Current Position</button>
+    <button onclick="startWatching()">Start Watching</button>
+    <button onclick="stopWatching()">Stop Watching</button>
+    <p id="output">Location will appear here.</p>
+    <script>
+        let watchID;
+        // 1. getCurrentPosition()
+        function getLocation() {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        }
+
+        // 2. watchPosition()
+        function startWatching() {
+            watchID = navigator.geolocation.watchPosition(showPosition);
+        }
+
+        // 3. clearWatch()
+        function stopWatching() {
+            navigator.geolocation.clearWatch(watchID);
+            document.getElementById("output").innerHTML = "Location tracking stopped.";
+        }
+
+        function showPosition(position) {
+            let latitude = position.coords.latitude;
+            let longitude = position.coords.longitude;
+
+            document.getElementById("output").innerHTML =
+                "Latitude: " + latitude + "<br>" +
+                "Longitude: " + longitude;
+        }
+        function getLocation() {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        }
+
+        function showPosition(position) {
+            let lat = position.coords.latitude;
+            let lon = position.coords.longitude;
+
+            document.getElementById("output").innerHTML =
+                "Latitude: " + lat + "<br>" +
+                "Longitude: " + lon + "<br><br>" +
+                "Getting address...";
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("output").innerHTML =
+                        "Latitude: " + lat + "<br>" +
+                        "Longitude: " + lon + "<br><br>" +
+                        "Address: " + data.display_name;
+                });
+        }
+    </script>
+</body>
+</html>
